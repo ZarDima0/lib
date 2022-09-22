@@ -1,0 +1,7 @@
+.gitignore
+sitemap.csv
+sitemap.json
+index.php
+.idea
+/vendor
+/upload
