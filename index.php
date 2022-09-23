@@ -2,8 +2,6 @@
 declare(strict_types = 1);
 error_reporting(E_ALL);
 require_once $_SERVER['DOCUMENT_ROOT'] . './vendor/autoload.php';
-
-var_dump(__DIR__);
 $array = [
     [
         'loc'=> 'https://site.ru/',
@@ -26,7 +24,6 @@ $array = [
 ];
 
 use Zardima0\Lib\SitemapGenerator;
-$path = __DIR__ . '/upload/sitemap.xml';
-var_dump($path);
+$path = __DIR__ . '/upload/';
 $newSitemap = new SitemapGenerator($array,'xml',$path);
 
