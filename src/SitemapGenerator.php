@@ -99,7 +99,7 @@ class SitemapGenerator
         for($i=0;$i<sizeof($this->arraySite);$i++) {
             $writer->startElement('url');
             $writer->writeElement('loc', htmlspecialchars($this->arraySite[$i]['loc']));
-            $writer->writeElement('lastmod',$this->arraySite[$i]['lastmod']->format(DATE_ATOM));
+            $writer->writeElement('lastmod',$this->arraySite[$i]['lastmod']);
             $writer->writeElement('changefreq', $this->arraySite[$i]['changefreq']);
             $writer->writeElement('priority',  $this->arraySite[$i]['priority']);
             $writer->endElement();
