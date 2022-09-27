@@ -2,7 +2,7 @@
     "name": "zardima0/lib",
     "autoload": {
         "psr-4": {
-            "Zardima0\\Lib": "src/"
+            "Zardima0\\Lib\\": "src/"
         }
     },
     "authors": [
