@@ -14,8 +14,11 @@ composer require zardima0/lib
 ````
 
 ````
+//index.php
+
 require_once $_SERVER['DOCUMENT_ROOT'] . './vendor/autoload.php';
 use Zardima0\Lib\SitemapGenerator;
+
 //Первый параметр принимает массив вида 
 $array = [
     [
@@ -25,10 +28,13 @@ $array = [
         'changefreq' => 'hourly',
     ],
 ];
+
 // Типы которые можно создать xml,csv, json;
 $type = 'xml';
+
 //Путь куда нужно сохранить, если такой директории нет, то она создается;
 $path = __DIR__ . '/upload/';
+
 new SitemapGenerator($array, $type, $path);
 ````
 <h2>Запускается в консоле</h2>
