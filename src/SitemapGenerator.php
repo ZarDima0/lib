@@ -3,7 +3,6 @@ namespace Zardima0\Lib;
 
 class SitemapGenerator
 {
-    private const MAX_FILE_SIZE = 52428800;
     private const MAX_URLS_PER_SITEMAP = 50000;
     private const MAX_URL_COUNT = 2048;
 
@@ -26,14 +25,13 @@ class SitemapGenerator
 
     public function __construct(array $arrayUrl,string $type,string $path)
     {
-       $start = microtime(true);
-       $this->arraySite = $arrayUrl;
        $this->validateUrls($arrayUrl);
        $this->checkPath(rtrim($path));
        $this->checkType(rtrim($type));
        $this->generate();
-       echo 'Время выполнения скрипта: ' . (microtime(true) - $start) . ' sec.';
+       echo 'Sitemap готов ' . $this->path . self::FILE_NAME . '.' . $this->type;
     }
+
     private function validateUrls(array $urls)
     {
         if(sizeof($urls) >self::MAX_URLS_PER_SITEMAP) {
@@ -43,10 +41,10 @@ class SitemapGenerator
             if($urls[$i]['loc'] == null && mb_strlen($urls[$i]['loc'] <= self::MAX_URL_COUNT)) {
                 throw new \Zardima0\Lib\Exception\InvalidArrayException('Длинна loc должна быть от 1 до ' . self::MAX_URL_COUNT);
             }
-            if($urls[$i]['priority'] !== null && !in_array($urls[$i]['priority'],self::ALLOWED_PRI0RITY)) {
+            if($urls[$i]['priority'] == null && !in_array($urls[$i]['priority'],self::ALLOWED_PRI0RITY)) {
                 throw new \Zardima0\Lib\Exception\InvalidArrayException('Значение priority должно быть ' . implode(',',self::ALLOWED_PRI0RITY));
             }
-            if($urls[$i]['changefreq'] !== null && !in_array($urls[$i]['changefreq'],self::ALLOWED_CHANGEFREQ)) {
+            if($urls[$i]['changefreq'] == null && !in_array($urls[$i]['changefreq'],self::ALLOWED_CHANGEFREQ)) {
                 throw new \Zardima0\Lib\Exception\InvalidArrayException('Значение changefreq должно быть вот таким ' . implode(',',self::CHANGE_FREG));
             }
             if($urls[$i]['lastmod'] == null) {
@@ -91,17 +89,19 @@ class SitemapGenerator
     {
         $writer = new \XMLWriter();
         $writer->openMemory();
-        $writer->setIndent(true);
         $writer->openURI($this->path . 'sitemap.xml');
         $writer->startDocument('1.0', 'UTF-8');
+        $writer->setIndent(true);
         $writer->startElement('urlset');
         $writer->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
+        $writer->writeAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+        $writer->writeAttribute('xsi:schemaLocation', 'http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd');
         for($i=0;$i<sizeof($this->arraySite);$i++) {
             $writer->startElement('url');
             $writer->writeElement('loc', htmlspecialchars($this->arraySite[$i]['loc']));
             $writer->writeElement('lastmod',$this->arraySite[$i]['lastmod']);
-            $writer->writeElement('changefreq', $this->arraySite[$i]['changefreq']);
             $writer->writeElement('priority',  $this->arraySite[$i]['priority']);
+            $writer->writeElement('changefreq', $this->arraySite[$i]['changefreq']);
             $writer->endElement();
         }
         $writer->endElement();
@@ -119,6 +119,7 @@ class SitemapGenerator
     }
     private function generateJson()
     {
-        file_put_contents( $this->path . self::FILE_NAME . '.json',json_encode($this->arraySite,JSON_UNESCAPED_SLASHES));
+        file_put_contents( $this->path . self::FILE_NAME . '.json',json_encode(
+            $this->arraySite,JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
     }
 }
